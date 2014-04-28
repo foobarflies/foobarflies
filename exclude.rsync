@@ -1,0 +1,19 @@
+# exclude.rsync
+.DS_Store
+.gitignore
+.gitmodules
+.git
+.svn
+svn-commit*
+*.swp
+CONTRIBUTING.md
+LICENSE
+exclude.rsync
+TODO*
+README.md
+SECURITY.md
+Gruntfile.js
+config.example.js
+.travis.yml
+.bowerrc
+crontabs
