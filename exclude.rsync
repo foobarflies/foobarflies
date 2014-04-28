@@ -14,6 +14,5 @@ README.md
 SECURITY.md
 config.example.js
 .travis.yml
-.bowerrc
 crontabs
-# A rajouter plus tard : Gruntfile.js / bower.json / .npmignore
+# A rajouter plus tard : Gruntfile.js / bower.json / .bowerrc / .npmignore
