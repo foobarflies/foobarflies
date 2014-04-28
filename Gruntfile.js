@@ -939,6 +939,9 @@ var path           = require('path'),
         // Before running in production mode
         grunt.registerTask('prod', 'Build JS & templates for production', ['handlebars', 'concat', 'uglify', 'copy:prod', 'master-warn']);
 
+        // Full deployment
+        grunt.registerTask('deploy', 'Init, then build JS & templates for production', ['shell:bower', 'handlebars', 'concat', 'uglify', 'copy:prod']);
+
         // When you just say 'grunt'
         grunt.registerTask('default', 'Build JS & templates for development', ['update_submodules', 'handlebars', 'concat', 'copy:dev']);
     };
