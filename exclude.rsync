@@ -12,8 +12,8 @@ exclude.rsync
 TODO*
 README.md
 SECURITY.md
-Gruntfile.js
 config.example.js
 .travis.yml
 .bowerrc
 crontabs
+# A rajouter plus tard : Gruntfile.js / bower.json / .npmignore
