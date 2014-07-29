@@ -13,18 +13,7 @@ config = {
 
         // Example mail config
         // Visit http://docs.ghost.org/mail for instructions
-        // ```
-        //  mail: {
-        //      transport: 'SMTP',
-        //      options: {
-        //          service: 'Mailgun',
-        //          auth: {
-        //              user: '', // mailgun username
-        //              pass: ''  // mailgun password
-        //          }
-        //      }
-        //  },
-        // ```
+
 
         database: {
             client: 'sqlite3',
@@ -49,7 +38,17 @@ config = {
     // Configure your URL and mail settings here
     production: {
         url: 'http://www.foobarflies.io',
-        mail: {},
+        mail: {
+             transport: 'SMTP',
+             options: {
+                 host: 'smtp.foobarflies.io',
+                 auth: {
+                     user: 'info@foobarflies.io', // mailgun username
+                     pass: 'password'  // mailgun password
+                 }
+             },
+             fromaddress: 'info@foobarflies.io'
+         },
         database: {
             client: 'sqlite3',
             connection: {
