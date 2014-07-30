@@ -464,7 +464,6 @@ img {
    ========================================================================== */
 
 .post-footer {
-	margin: 3.2em 0;
 	padding: 0.5em 0;
 	border-top: 1px solid #efefef;
 	border-bottom: 1px solid #efefef;
@@ -510,8 +509,7 @@ img {
 
 .post-author {
 	clear: both;
-	margin: 2em 0;
-	padding: 2em 0;
+	padding: 2em 0 1em 0;
 }
 .post-author-avatar {
 	float:left;
@@ -538,7 +536,7 @@ img {
 }
 
 .post-comments {
-	padding: 1.2em;
+	padding: 1em;
 	background-color: #efefef;
 }
 
