@@ -1,106 +1,110 @@
 /*globals describe, before, beforeEach, afterEach, it*/
-var testUtils = require('../../utils'),
-    should = require('should'),
-    _ = require("lodash"),
+/*jshint expr:true*/
+var testUtils    = require('../../utils'),
+    should       = require('should'),
+    sequence     = require('when/sequence'),
+    _            = require('lodash'),
 
     // Stuff we are testing
-    Models = require('../../../server/models'),
-    knex = require('../../../server/models/base').knex;
+    AppModel     = require('../../../server/models').App,
+    context      = testUtils.context.admin;
 
 describe('App Model', function () {
+    // Keep the DB clean
+    before(testUtils.teardown);
+    afterEach(testUtils.teardown);
+    beforeEach(testUtils.setup('app'));
 
-    var AppModel = Models.App;
+    should.exist(AppModel);
 
-    before(function (done) {
-        testUtils.clearData().then(function () {
-            done();
-        }, done);
-    });
-
-    beforeEach(function (done) {
-        testUtils.initData()
-            .then(function () {
-                return testUtils.insertDefaultApp();
-            })
-            .then(function () {
-                done();
-            }, done);
-    });
-
-    afterEach(function (done) {
-        testUtils.clearData().then(function () {
-            done();
-        }, done);
-    });
-
-    after(function (done) {
-        testUtils.clearData().then(function () {
-            done();
-        }, done);
-    });
-
-    it('can browse', function (done) {
-        AppModel.browse().then(function (results) {
+    it('can findAll', function (done) {
+        AppModel.findAll().then(function (results) {
 
             should.exist(results);
 
             results.length.should.be.above(0);
 
             done();
-        }).then(null, done);
+        }).catch(done);
     });
 
-    it('can read', function (done) {
-        AppModel.read({id: 1}).then(function (foundApp) {
+    it('can findOne', function (done) {
+        AppModel.findOne({id: 1}).then(function (foundApp) {
             should.exist(foundApp);
 
+            foundApp.get('created_at').should.be.an.instanceof(Date);
+
             done();
-        }).then(null, done);
+        }).catch(done);
     });
 
     it('can edit', function (done) {
-        AppModel.read({id: 1}).then(function (foundApp) {
+        AppModel.findOne({id: 1}).then(function (foundApp) {
             should.exist(foundApp);
 
-            return foundApp.set({name: "New App"}).save();
+            return foundApp.set({name: 'New App'}).save(null, context);
         }).then(function () {
-            return AppModel.read({id: 1});
+            return AppModel.findOne({id: 1});
         }).then(function (updatedApp) {
             should.exist(updatedApp);
 
-            updatedApp.get("name").should.equal("New App");
+            updatedApp.get('name').should.equal('New App');
 
             done();
-        }).then(null, done);
+        }).catch(done);
     });
 
-    it("can add", function (done) {
+    it('can add', function (done) {
         var newApp = testUtils.DataGenerator.forKnex.createApp(testUtils.DataGenerator.Content.apps[1]);
 
-        AppModel.add(newApp).then(function (createdApp) {
+        AppModel.add(newApp, context).then(function (createdApp) {
             should.exist(createdApp);
 
             createdApp.attributes.name.should.equal(newApp.name);
 
             done();
-        }).then(null, done);
+        }).catch(done);
     });
 
-    it("can delete", function (done) {
-        AppModel.read({id: 1}).then(function (foundApp) {
+    it('can destroy', function (done) {
+        var firstApp = {id: 1};
+
+        AppModel.findOne(firstApp).then(function (foundApp) {
             should.exist(foundApp);
+            foundApp.attributes.id.should.equal(firstApp.id);
 
-            return AppModel['delete'](1);
-        }).then(function () {
-            return AppModel.browse();
-        }).then(function (foundApp) {
-            var hasRemovedId = foundApp.any(function (foundApp) {
-                return foundApp.id === 1;
-            });
+            return AppModel.destroy(firstApp);
+        }).then(function (response) {
+            response.toJSON().should.be.empty;
 
-            hasRemovedId.should.equal(false);
+            return AppModel.findOne(firstApp);
+        }).then(function (newResults) {
+            should.equal(newResults, null);
 
             done();
-        }).then(null, done);
+        }).catch(done);
+    });
+
+    it('can generate a slug', function (done) {
+        // Create 12 apps
+        sequence(_.times(12, function (i) {
+            return function () {
+                return AppModel.add({
+                    name: 'Kudos ' + i,
+                    version: '0.0.1',
+                    status: 'installed'
+                }, context);
+            };
+        })).then(function (createdApps) {
+            // Should have created 12 apps
+            createdApps.length.should.equal(12);
+
+            // Should have matching slugs
+            _(createdApps).each(function (app, i) {
+                app.get('slug').should.equal('kudos-' + i);
+            });
+
+            done();
+        }).catch(done);
     });
 });

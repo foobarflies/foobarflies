@@ -1,18 +1,17 @@
 var _ = require('lodash'),
     Models = require('../models'),
-    errors = require('../errorHandling'),
-    User   = Models.User,
-    App    = Models.App;
+    errors = require('../errors');
 
 var effective = {
     user: function (id) {
-        return User.read({id: id}, { withRelated: ['permissions', 'roles.permissions'] })
+        return Models.User.findOne({id: id, status: 'all'}, { include: ['permissions', 'roles', 'roles.permissions'] })
             .then(function (foundUser) {
                 var seenPerms = {},
                     rolePerms = _.map(foundUser.related('roles').models, function (role) {
                         return role.related('permissions').models;
                     }),
-                    allPerms = [];
+                    allPerms = [],
+                    user = foundUser.toJSON();
 
                 rolePerms.push(foundUser.related('permissions').models);
 
@@ -30,18 +29,18 @@ var effective = {
                     });
                 });
 
-                return allPerms;
+                return {permissions: allPerms, roles: user.roles};
             }, errors.logAndThrowError);
     },
 
     app: function (appName) {
-        return App.read({name: appName}, { withRelated: ['permissions'] })
+        return Models.App.findOne({name: appName}, { withRelated: ['permissions'] })
             .then(function (foundApp) {
                 if (!foundApp) {
                     return [];
                 }
 
-                return foundApp.related('permissions').models;
+                return {permissions: foundApp.related('permissions').models};
             }, errors.logAndThrowError);
     }
 };

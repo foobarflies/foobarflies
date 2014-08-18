@@ -1,199 +1,355 @@
 /*global describe, it, before, after */
-var supertest     = require('supertest'),
-    express       = require('express'),
+/*jshint expr:true*/
+var testUtils     = require('../../../utils'),
     should        = require('should'),
-    _             = require('lodash'),
-    testUtils     = require('../../../utils'),
+    supertest     = require('supertest'),
+    express       = require('express'),
 
     ghost         = require('../../../../../core'),
 
     httpServer,
-    request,
-    agent;
-
+    request;
 
 describe('User API', function () {
-    var user = testUtils.DataGenerator.forModel.users[0],
-        csrfToken = '';
+    var accesstoken = '';
 
     before(function (done) {
         var app = express();
 
+        // starting ghost automatically populates the db
+        // TODO: prevent db init, and manage bringing up the DB with fixtures ourselves
         ghost({app: app}).then(function (_httpServer) {
             httpServer = _httpServer;
-            // request = supertest(app);
             request = supertest.agent(app);
 
-            testUtils.clearData()
-                .then(function () {
-                    return testUtils.initData();
-                })
-                .then(function () {
-                    return testUtils.insertDefaultFixtures();
-                })
-                .then(function () {
+        }).then(function () {
+            return testUtils.doAuth(request);
+        }).then(function (token) {
+            accesstoken = token;
+            done();
+        }).catch(function (e) {
+            console.log('Ghost Error: ', e);
+            console.log(e.stack);
+        });
+    });
 
-                    request.get('/ghost/signin/')
+    after(function (done) {
+        testUtils.clearData().then(function () {
+            httpServer.close();
+            done();
+        });
+    });
+
+    describe('Browse', function () {
+
+        it('returns dates in ISO 8601 format', function (done) {
+            request.get(testUtils.API.getApiQuery('users/'))
+                .set('Authorization', 'Bearer ' + accesstoken)
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    var jsonResponse = res.body;
+                    jsonResponse.users.should.exist;
+                    testUtils.API.checkResponse(jsonResponse, 'users');
+
+                    jsonResponse.users.should.have.length(1);
+                    testUtils.API.checkResponse(jsonResponse.users[0], 'user', ['roles']);
+
+                    testUtils.API.isISO8601(jsonResponse.users[0].last_login).should.be.true;
+                    testUtils.API.isISO8601(jsonResponse.users[0].created_at).should.be.true;
+                    testUtils.API.isISO8601(jsonResponse.users[0].updated_at).should.be.true;
+
+                    done();
+                });
+        });
+
+        it('can retrieve all users', function (done) {
+            request.get(testUtils.API.getApiQuery('users/'))
+                .set('Authorization', 'Bearer ' + accesstoken)
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    should.not.exist(res.headers['x-cache-invalidate']);
+                    var jsonResponse = res.body;
+                    jsonResponse.users.should.exist;
+                    testUtils.API.checkResponse(jsonResponse, 'users');
+
+                    jsonResponse.users.should.have.length(1);
+                    testUtils.API.checkResponse(jsonResponse.users[0], 'user', ['roles']);
+                    done();
+                });
+        });
+    });
+
+    describe('Read', function () {
+        it('can retrieve a user by "me"', function (done) {
+            request.get(testUtils.API.getApiQuery('users/me/'))
+                .set('Authorization', 'Bearer ' + accesstoken)
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    should.not.exist(res.headers['x-cache-invalidate']);
+                    var jsonResponse = res.body;
+                    jsonResponse.users.should.exist;
+                    should.not.exist(jsonResponse.meta);
+
+                    jsonResponse.users.should.have.length(1);
+                    testUtils.API.checkResponse(jsonResponse.users[0], 'user', ['roles']);
+                    done();
+                });
+        });
+
+        it('can retrieve a user by id', function (done) {
+            request.get(testUtils.API.getApiQuery('users/1/'))
+                .set('Authorization', 'Bearer ' + accesstoken)
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    should.not.exist(res.headers['x-cache-invalidate']);
+                    var jsonResponse = res.body;
+                    jsonResponse.users.should.exist;
+                    should.not.exist(jsonResponse.meta);
+
+                    jsonResponse.users.should.have.length(1);
+                    testUtils.API.checkResponse(jsonResponse.users[0], 'user', ['roles']);
+                    done();
+                });
+        });
+
+        it('can retrieve a user by slug', function (done) {
+            request.get(testUtils.API.getApiQuery('users/slug/joe-bloggs/'))
+                .set('Authorization', 'Bearer ' + accesstoken)
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    should.not.exist(res.headers['x-cache-invalidate']);
+                    var jsonResponse = res.body;
+                    jsonResponse.users.should.exist;
+                    should.not.exist(jsonResponse.meta);
+
+                    jsonResponse.users.should.have.length(1);
+                    testUtils.API.checkResponse(jsonResponse.users[0], 'user', ['roles']);
+                    done();
+                });
+        });
+
+        it('can retrieve a user by email', function (done) {
+            request.get(testUtils.API.getApiQuery('users/email/jbloggs%40example.com/'))
+                .set('Authorization', 'Bearer ' + accesstoken)
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    should.not.exist(res.headers['x-cache-invalidate']);
+                    var jsonResponse = res.body;
+                    jsonResponse.users.should.exist;
+                    should.not.exist(jsonResponse.meta);
+
+                    jsonResponse.users.should.have.length(1);
+                    testUtils.API.checkResponse(jsonResponse.users[0], 'user', ['roles']);
+                    done();
+                });
+        });
+
+        it('can retrieve a user with role', function (done) {
+            request.get(testUtils.API.getApiQuery('users/me/?include=roles'))
+                .set('Authorization', 'Bearer ' + accesstoken)
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    should.not.exist(res.headers['x-cache-invalidate']);
+                    var jsonResponse = res.body;
+                    jsonResponse.users.should.exist;
+                    should.not.exist(jsonResponse.meta);
+
+                    jsonResponse.users.should.have.length(1);
+                    testUtils.API.checkResponse(jsonResponse.users[0], 'user', ['roles']);
+                    testUtils.API.checkResponse(jsonResponse.users[0].roles[0], 'role');
+                    done();
+                });
+        });
+
+        it('can retrieve a user with role and permissions', function (done) {
+            request.get(testUtils.API.getApiQuery('users/me/?include=roles,roles.permissions'))
+                .set('Authorization', 'Bearer ' + accesstoken)
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    should.not.exist(res.headers['x-cache-invalidate']);
+                    var jsonResponse = res.body;
+                    jsonResponse.users.should.exist;
+                    should.not.exist(jsonResponse.meta);
+
+                    jsonResponse.users.should.have.length(1);
+                    testUtils.API.checkResponse(jsonResponse.users[0], 'user', ['roles']);
+                    testUtils.API.checkResponse(jsonResponse.users[0].roles[0], 'role', ['permissions']);
+                    // testUtils.API.checkResponse(jsonResponse.users[0].roles[0].permissions[0], 'permission');
+
+                    done();
+                });
+        });
+
+        it('can retrieve a user by slug with role and permissions', function (done) {
+            request.get(testUtils.API.getApiQuery('users/slug/joe-bloggs/?include=roles,roles.permissions'))
+                .set('Authorization', 'Bearer ' + accesstoken)
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    should.not.exist(res.headers['x-cache-invalidate']);
+                    var jsonResponse = res.body;
+                    jsonResponse.users.should.exist;
+                    should.not.exist(jsonResponse.meta);
+
+                    jsonResponse.users.should.have.length(1);
+                    testUtils.API.checkResponse(jsonResponse.users[0], 'user', ['roles']);
+                    testUtils.API.checkResponse(jsonResponse.users[0].roles[0], 'role', ['permissions']);
+                    // testUtils.API.checkResponse(jsonResponse.users[0].roles[0].permissions[0], 'permission');
+
+                    done();
+                });
+        });
+
+        it('can\'t retrieve non existent user by id', function (done) {
+            request.get(testUtils.API.getApiQuery('users/99/'))
+                .set('Authorization', 'Bearer ' + accesstoken)
+                .expect('Content-Type', /json/)
+                .expect(404)
+                .end(function (err, res) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    should.not.exist(res.headers['x-cache-invalidate']);
+                    var jsonResponse = res.body;
+                    jsonResponse.should.exist;
+                    jsonResponse.errors.should.exist;
+                    testUtils.API.checkResponseValue(jsonResponse.errors[0], ['message', 'type']);
+                    done();
+                });
+        });
+
+        it('can\'t retrieve non existent user by slug', function (done) {
+            request.get(testUtils.API.getApiQuery('users/slug/blargh/'))
+                .set('Authorization', 'Bearer ' + accesstoken)
+                .expect('Content-Type', /json/)
+                .expect(404)
+                .end(function (err, res) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    should.not.exist(res.headers['x-cache-invalidate']);
+                    var jsonResponse = res.body;
+                    jsonResponse.should.exist;
+                    jsonResponse.errors.should.exist;
+                    testUtils.API.checkResponseValue(jsonResponse.errors[0], ['message', 'type']);
+                    done();
+                });
+        });
+    });
+    describe('Edit', function () {
+        it('can edit a user', function (done) {
+            request.get(testUtils.API.getApiQuery('users/me/'))
+                .set('Authorization', 'Bearer ' + accesstoken)
+                .expect('Content-Type', /json/)
+                .end(function (err, res) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    var jsonResponse = res.body,
+                        changedValue = 'http://joe-bloggs.ghost.org',
+                        dataToSend;
+                    jsonResponse.users[0].should.exist;
+                    testUtils.API.checkResponse(jsonResponse.users[0], 'user', ['roles']);
+
+                    dataToSend = { users: [
+                        {website: changedValue}
+                    ]};
+
+                    request.put(testUtils.API.getApiQuery('users/me/'))
+                        .set('Authorization', 'Bearer ' + accesstoken)
+                        .send(dataToSend)
+                        .expect('Content-Type', /json/)
                         .expect(200)
                         .end(function (err, res) {
                             if (err) {
                                 return done(err);
                             }
 
-                            var pattern_meta = /<meta.*?name="csrf-param".*?content="(.*?)".*?>/i;
-                            pattern_meta.should.exist;
-                            csrfToken = res.text.match(pattern_meta)[1];
-
-                            setTimeout(function () {
-                                request.post('/ghost/signin/')
-                                    .set('X-CSRF-Token', csrfToken)
-                                    .send({email: user.email, password: user.password})
-                                    .expect(200)
-                                    .end(function (err, res) {
-                                        if (err) {
-                                            return done(err);
-                                        }
-
-                                        request.saveCookies(res);
-                                        request.get('/ghost/')
-                                            .expect(200)
-                                            .end(function (err, res) {
-                                                if (err) {
-                                                    return done(err);
-                                                }
-                                                // console.log('/ghost/', err, res);
-                                                csrfToken = res.text.match(pattern_meta)[1];
-                                                done();
-                                            });
-                                    });
-
-                            }, 2000);
-
+                            var putBody = res.body;
+                            res.headers['x-cache-invalidate'].should.eql('/*');
+                            putBody.users[0].should.exist;
+                            putBody.users[0].website.should.eql(changedValue);
+                            putBody.users[0].email.should.eql(jsonResponse.users[0].email);
+                            testUtils.API.checkResponse(putBody.users[0], 'user', ['roles']);
+                            done();
                         });
-                }, done);
-        }).otherwise(function (e) {
-            console.log('Ghost Error: ', e);
-            console.log(e.stack);
+                });
+        });
+
+        it('can\'t edit a user with invalid accesstoken', function (done) {
+            request.get(testUtils.API.getApiQuery('users/me/'))
+                .set('Authorization', 'Bearer ' + accesstoken)
+                .expect('Content-Type', /json/)
+                .end(function (err, res) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    var jsonResponse = res.body,
+                        changedValue = 'joe-bloggs.ghost.org';
+                    jsonResponse.users[0].should.exist;
+                    jsonResponse.users[0].website = changedValue;
+
+                    request.put(testUtils.API.getApiQuery('users/me/'))
+                        .set('Authorization', 'Bearer ' + 'invalidtoken')
+                        .send(jsonResponse)
+                        .expect(401)
+                        .end(function (err, res) {
+                            if (err) {
+                                return done(err);
+                            }
+
+                            done();
+                        });
+
+                });
         });
     });
-
-    after(function () {
-        httpServer.close();
-    });
-
-    it('can retrieve all users', function (done) {
-        request.get(testUtils.API.getApiQuery('users/'))
-            .expect(200)
-            .end(function (err, res) {
-                if (err) {
-                    return done(err);
-                }
-
-                should.not.exist(res.headers['x-cache-invalidate']);
-                res.should.be.json;
-                var jsonResponse = res.body;
-                jsonResponse[0].should.exist;
-
-                testUtils.API.checkResponse(jsonResponse[0], 'user');
-                done();
-            });
-    });
-
-    it('can retrieve a user', function (done) {
-        request.get(testUtils.API.getApiQuery('users/me/'))
-            .expect(200)
-            .end(function (err, res) {
-                if (err) {
-                    return done(err);
-                }
-
-                should.not.exist(res.headers['x-cache-invalidate']);
-                res.should.be.json;
-                var jsonResponse = res.body;
-                jsonResponse.should.exist;
-
-                testUtils.API.checkResponse(jsonResponse, 'user');
-                done();
-            });
-    });
-
-    it('can\'t retrieve non existent user', function (done) {
-        request.get(testUtils.API.getApiQuery('users/99/'))
-            .expect(404)
-            .end(function (err, res) {
-                if (err) {
-                    return done(err);
-                }
-
-                should.not.exist(res.headers['x-cache-invalidate']);
-                res.should.be.json;
-                var jsonResponse = res.body;
-                jsonResponse.should.exist;
-
-                testUtils.API.checkResponseValue(jsonResponse, ['error']);
-                done();
-            });
-    });
-
-    it('can edit a user', function (done) {
-        request.get(testUtils.API.getApiQuery('users/me/'))
-            .end(function (err, res) {
-                if (err) {
-                    return done(err);
-                }
-
-                var jsonResponse = res.body,
-                    changedValue = 'joe-bloggs.ghost.org';
-                jsonResponse.should.exist;
-                jsonResponse.website = changedValue;
-
-                request.put(testUtils.API.getApiQuery('users/me/'))
-                    .set('X-CSRF-Token', csrfToken)
-                    .send(jsonResponse)
-                    .expect(200)
-                    .end(function (err, res) {
-                        if (err) {
-                            return done(err);
-                        }
-
-                        var putBody = res.body;
-                        res.headers['x-cache-invalidate'].should.eql('/*');
-                        res.should.be.json;
-                        putBody.should.exist;
-                        putBody.website.should.eql(changedValue);
-
-                        testUtils.API.checkResponse(putBody, 'user');
-                        done();
-                    });
-            });
-    });
-
-    it('can\'t edit a user with invalid CSRF token', function (done) {
-        request.get(testUtils.API.getApiQuery('users/me/'))
-            .end(function (err, res) {
-                if (err) {
-                    return done(err);
-                }
-
-                var jsonResponse = res.body,
-                    changedValue = 'joe-bloggs.ghost.org';
-                jsonResponse.should.exist;
-                jsonResponse.website = changedValue;
-
-                request.put(testUtils.API.getApiQuery('users/me/'))
-                    .set('X-CSRF-Token', 'invalid-token')
-                    .send(jsonResponse)
-                    .expect(403)
-                    .end(function (err, res) {
-                        if (err) {
-                            return done(err);
-                        }
-
-                        done();
-                    });
-
-            });
-    });
-
-
 });

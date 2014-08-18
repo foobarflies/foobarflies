@@ -1,76 +1,54 @@
 /*globals describe, before, beforeEach, afterEach, it*/
-var testUtils = require('../../utils'),
-    should = require('should'),
-    _ = require("lodash"),
+/*jshint expr:true*/
+var testUtils       = require('../../utils'),
+    should          = require('should'),
 
     // Stuff we are testing
-    Models = require('../../../server/models'),
-    knex = require('../../../server/models/base').knex;
+    AppSettingModel = require('../../../server/models').AppSetting,
+    context         = testUtils.context.admin;
 
 describe('App Setting Model', function () {
+    // Keep the DB clean
+    before(testUtils.teardown);
+    afterEach(testUtils.teardown);
+    beforeEach(testUtils.setup('app_setting'));
 
-    var AppSettingModel = Models.AppSetting;
+    should.exist(AppSettingModel);
 
-    before(function (done) {
-        testUtils.clearData().then(function () {
-            done();
-        }, done);
-    });
-
-    beforeEach(function (done) {
-        testUtils.initData()
-            .then(function () {
-                return testUtils.insertAppWithSettings();
-            })
-            .then(function () {
-                done();
-            }, done);
-    });
-
-    afterEach(function (done) {
-        testUtils.clearData().then(function () {
-            done();
-        }, done);
-    });
-
-    after(function (done) {
-        testUtils.clearData().then(function () {
-            done();
-        }, done);
-    });
-
-    it('can browse', function (done) {
-        AppSettingModel.browse().then(function (results) {
+    it('can findAll', function (done) {
+        AppSettingModel.findAll().then(function (results) {
 
             should.exist(results);
 
             results.length.should.be.above(0);
 
             done();
-        }).then(null, done);
+        }).catch(done);
     });
 
-    it('can read', function (done) {
-        AppSettingModel.read({id: 1}).then(function (foundAppSetting) {
+    it('can findOne', function (done) {
+        AppSettingModel.findOne({id: 1}).then(function (foundAppSetting) {
             should.exist(foundAppSetting);
 
+            foundAppSetting.get('created_at').should.be.an.instanceof(Date);
+
             done();
-        }).then(null, done);
+        }).catch(done);
     });
 
     it('can edit', function (done) {
-        AppSettingModel.read({id: 1}).then(function (foundAppSetting) {
+        AppSettingModel.findOne({id: 1}).then(function (foundAppSetting) {
             should.exist(foundAppSetting);
 
-            return foundAppSetting.set({value: "350"}).save();
+            return foundAppSetting.set({value: '350'}).save(null, context);
         }).then(function () {
-            return AppSettingModel.read({id: 1});
+            return AppSettingModel.findOne({id: 1});
         }).then(function (updatedAppSetting) {
             should.exist(updatedAppSetting);
 
-            updatedAppSetting.get("value").should.equal("350");
+            updatedAppSetting.get('value').should.equal('350');
 
             done();
-        }).then(null, done);
+        }).catch(done);
     });
 });

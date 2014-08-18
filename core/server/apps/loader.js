@@ -2,7 +2,7 @@
 var path = require('path'),
     _    = require('lodash'),
     when = require('when'),
-    appProxy = require('./proxy'),
+    AppProxy = require('./proxy'),
     config = require('../config'),
     AppSandbox = require('./sandbox'),
     AppDependencies = require('./dependencies'),
@@ -11,7 +11,7 @@ var path = require('path'),
 
 // Get the full path to an app by name
 function getAppAbsolutePath(name) {
-    return path.join(config().paths.appPath, name);
+    return path.join(config.paths.appPath, name);
 }
 
 // Get a relative path to the given apps root, defaults
@@ -29,9 +29,13 @@ function loadApp(appPath) {
     return sandbox.loadApp(appPath);
 }
 
-function getAppByName(name) {
+function getAppByName(name, permissions) {
     // Grab the app class to instantiate
     var AppClass = loadApp(getAppRelativePath(name)),
+        appProxy = new AppProxy({
+            name: name,
+            permissions: permissions
+        }),
         app;
 
     // Check for an actual class, otherwise just use whatever was returned
@@ -41,7 +45,10 @@ function getAppByName(name) {
         app = AppClass;
     }
 
-    return app;
+    return {
+        app: app,
+        proxy: appProxy
+    };
 }
 
 // The loader is responsible for loading apps
@@ -63,7 +70,9 @@ loader = {
                 });
             })
             .then(function (appPerms) {
-                var app = getAppByName(name, appPerms);
+                var appInfo = getAppByName(name, appPerms),
+                    app = appInfo.app,
+                    appProxy = appInfo.proxy;
 
                 // Check for an install() method on the app.
                 if (!_.isFunction(app.install)) {
@@ -84,7 +93,9 @@ loader = {
         var perms = new AppPermissions(getAppAbsolutePath(name));
 
         return perms.read().then(function (appPerms) {
-            var app = getAppByName(name, appPerms);
+            var appInfo = getAppByName(name, appPerms),
+                app = appInfo.app,
+                appProxy = appInfo.proxy;
 
             // Check for an activate() method on the app.
             if (!_.isFunction(app.activate)) {
