@@ -380,6 +380,7 @@ var _              = require('lodash'),
             emberTemplates: {
                 dev: {
                     options: {
+                        templateNamespace: 'Handlebars',
                         templateBasePath: /core\/client\//,
                         templateFileExtensions: /\.hbs/,
                         templateRegistration: function (name, template) {
@@ -395,6 +396,7 @@ var _              = require('lodash'),
 
                 prod: {
                     options: {
+                        templateNamespace: 'Handlebars',
                         templateBasePath: /core\/client\//,
                         templateFileExtensions: /\.hbs/,
                         templateRegistration: function (name, template) {
@@ -1107,7 +1109,7 @@ var _              = require('lodash'),
         //
         // It is otherwise the same as running `grunt`, but is only used when running Ghost in the `production` env.
         grunt.registerTask('prod', 'Build JS & templates for production',
-            ['concat:prod', 'copy:prod', 'emberBuildProd', 'uglify:prod']);
+            ['concat:prod', 'copy:prod', 'emberBuildProd', 'uglify:prod', 'master-warn']);
 
         // ### Default asset build
         // `grunt` - default grunt task
