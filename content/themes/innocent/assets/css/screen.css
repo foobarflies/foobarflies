@@ -282,6 +282,8 @@ img {
 	text-align: center;
 	z-index: 30;
 	padding: 2em 0;
+  /* Header picture */
+  background: url('../images/header.png') no-repeat black 50% 0 ;
 }
 
 #site-head.cover {
