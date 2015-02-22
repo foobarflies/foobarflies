@@ -41,6 +41,7 @@ Session.vim
 .build
 .dist
 .tmp
+.tmp/*
 
 /core/server/data/export/exported*
 /core/client/docs/_site
