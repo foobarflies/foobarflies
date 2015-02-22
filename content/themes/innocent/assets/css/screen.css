@@ -283,7 +283,7 @@ img {
 	z-index: 30;
 	padding: 2em 0;
   /* Header picture */
-  background: url('../images/header.png') no-repeat black 50% 0 ;
+  background: url('../images/header.png') no-repeat #292e33 50% 0 ;
 }
 
 #site-head.cover {
