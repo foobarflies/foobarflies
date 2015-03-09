@@ -541,6 +541,19 @@ img {
 	background-color: #efefef;
 }
 
+section.post-excerpt p {
+  margin: 1em 0 0 0;
+}
+span.post-meta {
+  margin-bottom: 6px
+}
+
+div.post-image {
+  width: 100%;
+  height: 200px;
+  margin: 10px 0;
+  border: 1px solid #292e33;
+}
 
 /* ==========================================================================
    6. Media Queries - Smaller than 640px
