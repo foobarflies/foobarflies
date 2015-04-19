@@ -1,53 +1,19 @@
 // # Ghost Configuration
 // Setup your Ghost install for various environments
-// Documentation can be found at http://support.ghost.org/config/
+// Documentation can be found at http://docs.ghost.org/usage/configuration/
 
 var path = require('path'),
     config;
 
 config = {
-    // ### Production
-    // When running Ghost in the wild, use the production environment
-    // Configure your URL and mail settings here
-    production: {
-        url: 'http://my-ghost-blog.com',
-        mail: {},
-        database: {
-            client: 'sqlite3',
-            connection: {
-                filename: path.join(__dirname, '/content/data/ghost.db')
-            },
-            debug: false
-        },
-
-        server: {
-            // Host to be passed to node's `net.Server#listen()`
-            host: '127.0.0.1',
-            // Port to be passed to node's `net.Server#listen()`, for iisnode set this to `process.env.PORT`
-            port: '2368'
-        }
-    },
-
     // ### Development **(default)**
     development: {
         // The url to use when providing links to the site, E.g. in RSS and email.
-        // Change this to your Ghost blogs published URL.
-        url: 'http://localhost:2368',
+        url: 'http://dev.foobarflies.io',
 
         // Example mail config
-        // Visit http://support.ghost.org/mail for instructions
-        // ```
-        //  mail: {
-        //      transport: 'SMTP',
-        //      options: {
-        //          service: 'Mailgun',
-        //          auth: {
-        //              user: '', // mailgun username
-        //              pass: ''  // mailgun password
-        //          }
-        //      }
-        //  },
-        // ```
+        // Visit http://docs.ghost.org/mail for instructions
+
 
         database: {
             client: 'sqlite3',
@@ -60,10 +26,40 @@ config = {
             // Host to be passed to node's `net.Server#listen()`
             host: '127.0.0.1',
             // Port to be passed to node's `net.Server#listen()`, for iisnode set this to `process.env.PORT`
-            port: '2368'
+            port: '4368'
         },
         paths: {
             contentPath: path.join(__dirname, '/content/')
+        }
+    },
+
+    // ### Production
+    // When running Ghost in the wild, use the production environment
+    // Configure your URL and mail settings here
+    production: {
+        url: 'http://www.foobarflies.io',
+        mail: {
+             transport: 'SMTP',
+             options: {
+                 host: 'smtp.foobarflies.io',
+                 auth: {
+                     user: 'info@foobarflies.io', // mailgun username
+                     pass: 'password'  // mailgun password
+                 }
+             }
+         },
+        database: {
+            client: 'sqlite3',
+            connection: {
+                filename: path.join(__dirname, '/content/data/ghost.db')
+            },
+            debug: false
+        },
+        server: {
+            // Host to be passed to node's `net.Server#listen()`
+            host: '127.0.0.1',
+            // Port to be passed to node's `net.Server#listen()`, for iisnode set this to `process.env.PORT`
+            port: '4369'
         }
     },
 
@@ -73,7 +69,7 @@ config = {
     // Used when developing Ghost to run tests and check the health of Ghost
     // Uses a different port number
     testing: {
-        url: 'http://127.0.0.1:2369',
+        url: 'http://127.0.0.1:2379',
         database: {
             client: 'sqlite3',
             connection: {
@@ -82,7 +78,7 @@ config = {
         },
         server: {
             host: '127.0.0.1',
-            port: '2369'
+            port: '2379'
         },
         logging: false
     },
@@ -90,7 +86,7 @@ config = {
     // ### Testing MySQL
     // Used by Travis - Automated testing run through GitHub
     'testing-mysql': {
-        url: 'http://127.0.0.1:2369',
+        url: 'http://127.0.0.1:2379',
         database: {
             client: 'mysql',
             connection: {
@@ -103,7 +99,7 @@ config = {
         },
         server: {
             host: '127.0.0.1',
-            port: '2369'
+            port: '2379'
         },
         logging: false
     },
@@ -111,7 +107,7 @@ config = {
     // ### Testing pg
     // Used by Travis - Automated testing run through GitHub
     'testing-pg': {
-        url: 'http://127.0.0.1:2369',
+        url: 'http://127.0.0.1:2379',
         database: {
             client: 'pg',
             connection: {
@@ -124,7 +120,7 @@ config = {
         },
         server: {
             host: '127.0.0.1',
-            port: '2369'
+            port: '2379'
         },
         logging: false
     }
