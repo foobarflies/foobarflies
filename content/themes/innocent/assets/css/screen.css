@@ -399,7 +399,7 @@ img {
 
 .post {
 	position: relative;
-	padding: 4em 0;
+	padding: 3em 0;
 	z-index: 10;
 }
 #post-index {
@@ -427,6 +427,13 @@ img {
 }
 .post-title a {
 	text-decoration: none;
+}
+
+.hire {
+  border: 1px solid #b9fba5;
+  background-color: #e0fbc7;
+  margin-top: 3em;
+  padding: 10px;
 }
 
 /* ==========================================================================
