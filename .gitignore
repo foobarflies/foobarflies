@@ -48,3 +48,7 @@ CHANGELOG.md
 
 _SOURCES_
 config.js
+
+deploy/*
+!deploy/nginx.conf
+!deploy/foobarflies.supervisor.conf
