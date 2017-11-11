@@ -14,8 +14,8 @@ set('env', 'prod');
 set('default_stage', 'production');
 set('repository', 'git@github.com:foobarflies/foobarflies.git');
 set('shared_files', []);
-set('shared_dirs', ['content/apps', 'content/data', 'content/images']);
-set('writable_dirs', ['content/apps', 'content/data', 'content/images']);
+set('shared_dirs', ['content/apps', 'content/logs', 'content/data', 'content/images']);
+set('writable_dirs', ['content/apps', 'content/logs', 'content/data', 'content/images']);
 set('bin/npm', function () {
     return (string)run('which npm');
 });
@@ -26,7 +26,7 @@ set('clear_paths', [
   './deploy.php',
   './.gitignore',
   './LICENSE',
-  './config.example.js',
+  './config.development.js',
   './_SOURCES_',
   './.git',
   './deploy',
@@ -40,7 +40,7 @@ task('deploy:npm_install', function() {
 
 desc('Deploy production parameters');
 task('deploy:parameters', function () {
-    upload('./deploy/config.{{env}}.js', '{{deploy_path}}/release/config.js');
+    upload('./deploy/config.{{env}}.js', '{{deploy_path}}/release/config.production.js');
 });
 
 desc('Deploy the project');
