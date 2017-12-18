@@ -26,9 +26,10 @@ set('clear_paths', [
   './deploy.php',
   './.gitignore',
   './LICENSE',
-  './config.development.js',
+  './config.example.json',
   './_SOURCES_',
   './.git',
+  './.ghost-cli',
   './deploy',
 ]);
 
