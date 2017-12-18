@@ -52,3 +52,4 @@ config.js
 deploy/*
 !deploy/nginx.conf
 !deploy/foobarflies.supervisor.conf
+config.production.json

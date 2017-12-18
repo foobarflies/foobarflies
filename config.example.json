@@ -8,9 +8,9 @@
     "client": "mysql",
     "connection": {
       "host": "localhost",
-      "user": "foobarflies",
-      "password": "foobarflies",
-      "database": "foobarflies"
+      "user": "user",
+      "password": "pwd",
+      "database": "db"
     }
   },
   "mail": {
@@ -23,6 +23,6 @@
     ]
   },
   "paths": {
-    "contentPath": "/Users/tchap/Documents/home/www/foobarflies/content"
+    "contentPath": "/path/to/content"
   }
 }
