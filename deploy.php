@@ -60,6 +60,11 @@ task('deploy', [
     'success'
 ]);
 
+task('warn', function () {
+  writeln("\n\n\tYou <error>MUST</error> run migrations locally and update the production database if\n\tthere was a jump in minor or major version :\n\n\tUPDATE migrations SET currentVersion = '1.20';\n\n");
+});
+
 // [Optional] if deploy fails automatically unlock.
 after('deploy:update_code', 'deploy:parameters');
 after('deploy:failed', 'deploy:unlock');
+before('deploy','warn');
