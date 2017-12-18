@@ -41,7 +41,7 @@ task('deploy:npm_install', function() {
 
 desc('Deploy production parameters');
 task('deploy:parameters', function () {
-    upload('./deploy/config.{{env}}.js', '{{deploy_path}}/release/config.production.js');
+    upload('./deploy/config.{{env}}.json', '{{deploy_path}}/release/config.production.json');
 });
 
 desc('Deploy the project');
