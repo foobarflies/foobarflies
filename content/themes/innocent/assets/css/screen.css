@@ -560,6 +560,8 @@ div.post-image {
   height: 200px;
   margin: 10px 0;
   border: 1px solid #292e33;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 /* ==========================================================================
