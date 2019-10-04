@@ -14,6 +14,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ghost": "1.19.0"
+    "ghost": "1.26.0"
   }
 }
