@@ -54,8 +54,8 @@
         src={{ shared_path }}/content/images
         dest={{ release_path }}/content/images
         state=link
-    - name: Update npm (directly in Ghost folder)
-      npm:
+    - name: Install npm packages (directly in Ghost folder)
+      yarn:
         path={{ release_path }}/current
     - name: Stop the server via pm2
       shell: pm2 stop foobarflies
