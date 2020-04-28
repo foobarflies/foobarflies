@@ -28,7 +28,6 @@
       git:
         repo: "git@github.com:foobarflies/foobarflies.git"
         dest: "{{ release_path }}"
-        version: ghost3
     - name: Link config.production.json file
       file:
         src={{ shared_path }}/config.production.json
