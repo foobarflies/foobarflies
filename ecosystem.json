@@ -1,7 +1,7 @@
 {
   "apps": [{
     "name": "foobarflies",
-    "script": "./index.js",
+    "script": "./current/index.js",
     "cwd": "./current",
     "error_file": "../logs/app.err.log",
     "out_file": "../logs/app.out.log",
