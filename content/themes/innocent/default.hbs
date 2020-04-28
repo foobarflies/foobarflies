@@ -20,18 +20,18 @@
 
 <body class="{{body_class}}">
 	
-	<header id="site-head"{{#if @blog.cover_image}} class="cover"{{/if}}>
+	<header id="site-head"{{#if @site.cover_image}} class="cover"{{/if}}>
 		<div class="inner">
-			{{#if @blog.logo}}
-				<a class="js-ajax-link js-show-index" id="blog-logo" href="{{@blog.url}}"><img src="{{@blog.logo}}" alt="Blog Logo" /></a>
-				<h1 class="blog-title"><a class="js-ajax-link js-show-index" id="blog-logo-title" href="{{@blog.url}}">{{@blog.title}}</a></h1>
+			{{#if @site.logo}}
+				<a class="js-ajax-link js-show-index" id="blog-logo" href="{{@site.url}}"><img src="{{@site.logo}}" alt="Blog Logo" /></a>
+				<h1 class="blog-title"><a class="js-ajax-link js-show-index" id="blog-logo-title" href="{{@site.url}}">{{@site.title}}</a></h1>
 			{{else}}
-				<h1 class="blog-title"><a class="js-ajax-link js-show-index" id="blog-title" href="{{@blog.url}}">{{@blog.title}}</a></h1>
+				<h1 class="blog-title"><a class="js-ajax-link js-show-index" id="blog-title" href="{{@site.url}}">{{@site.title}}</a></h1>
 			{{/if}}
-      <h4 class="blog-description">{{@blog.description}}</h4>
+      <h4 class="blog-description">{{@site.description}}</h4>
 		</div>
-		{{#if @blog.cover_image}}
-			<div id="site-cover" style="background-image: url({{@blog.cover_image}})"></div>
+		{{#if @site.cover_image}}
+			<div id="site-cover" style="background-image: url({{@site.cover_image}})"></div>
 		{{/if}}
 	</header>
 	
@@ -43,9 +43,9 @@
 	
 	<footer id="site-footer">
 		<div class="inner">
-			<a alt="Flux RSS" title="Flux RSS" class="subscribe" href="{{@blog.url}}/rss/"><i class="fa fa-rss"></i></a>
-			<span class="blog-authors">A blog by <a href="http://coox.org/">Eric</a> & <a href="http://tchap.me">Cyril</a> — Contact us : <code>cyril</code> or <code>eric</code> followed by <code>@foobarflies.io</code></span>
-			<section class="poweredby">Theme based on <a href="https://github.com/zutrinken/innocent">Innocent</a> by <a href="http://zutrinken.com" rel="nofollow">zutrinken</a>.</section>
+			<a alt="Flux RSS" title="Flux RSS" class="subscribe" href="{{@site.url}}/rss/"><i class="fa fa-rss"></i></a>
+			<span class="blog-authors">A blog by <a href="https://coox.org/">Eric</a> & <a href="https://tchap.me">Cyril</a> — Contact us : <code>cyril</code> or <code>eric</code> followed by <code>@foobarflies.io</code></span>
+			<section class="poweredby">Theme based on <a href="https://github.com/zutrinken/innocent">Innocent</a> by <a href="https://peteramende.de/" rel="nofollow">peteramende</a>.</section>
 		</div>
 	</footer>
 

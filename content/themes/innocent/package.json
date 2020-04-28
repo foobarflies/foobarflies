@@ -1,10 +1,14 @@
 {
   "name": "innocent",
   "version": "2.0.0",
+  "keywords": ["ghost-theme"],
   "config": {
     "posts_per_page": 5
   },
   "author": {
     "email": "tchap@tchap.me"
+  },
+  "engines": {
+    "ghost-api": "v3"
   }
 }

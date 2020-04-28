@@ -5,13 +5,12 @@
     "host": "127.0.0.1"
   },
   "database": {
-    "client": "mysql",
+    "client": "sqlite3",
     "connection": {
-      "host": "localhost",
-      "user": "user",
-      "password": "pwd",
-      "database": "db"
-    }
+      "filename": "content/data/ghost.db"
+    },
+    "useNullAsDefault": true,
+    "debug": false
   },
   "mail": {
     "transport": "Direct"
@@ -23,6 +22,6 @@
     ]
   },
   "paths": {
-    "contentPath": "/path/to/content"
+    "contentPath": "content"
   }
 }

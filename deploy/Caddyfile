@@ -1,0 +1,3 @@
+foobarflies.io {
+    reverse_proxy localhost:2368
+}

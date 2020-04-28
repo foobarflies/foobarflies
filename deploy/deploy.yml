@@ -28,34 +28,35 @@
       git:
         repo: "git@github.com:foobarflies/foobarflies.git"
         dest: "{{ release_path }}"
+        version: ghost3
     - name: Link config.production.json file
       file:
         src={{ shared_path }}/config.production.json
         dest={{ release_path }}/config.production.json
         state=link
-    - name: Link contents/apps directory
+    - name: Link content/apps directory
       file:
-        src={{ shared_path }}/contents/apps
-        dest={{ release_path }}/contents/apps
+        src={{ shared_path }}/content/apps
+        dest={{ release_path }}/content/apps
         state=link
-    - name: Link contents/logs directory
+    - name: Link content/logs directory
       file:
-        src={{ shared_path }}/contents/logs
-        dest={{ release_path }}/contents/logs
+        src={{ shared_path }}/content/logs
+        dest={{ release_path }}/content/logs
         state=link
-    - name: Link contents/data directory
+    - name: Link content/data directory
       file:
-        src={{ shared_path }}/contents/data
-        dest={{ release_path }}/contents/data
+        src={{ shared_path }}/content/data
+        dest={{ release_path }}/content/data
         state=link
-    - name: Link contents/images directory
+    - name: Link content/images directory
       file:
-        src={{ shared_path }}/contents/images
-        dest={{ release_path }}/contents/images
+        src={{ shared_path }}/content/images
+        dest={{ release_path }}/content/images
         state=link
-    - name: Update npm
-      npm:
-        path={{ release_path }}
+    - name: Install npm packages (directly in Ghost folder)
+      yarn:
+        path={{ release_path }}/current
     - name: Stop the server via pm2
       shell: pm2 stop foobarflies
       ignore_errors: yes
