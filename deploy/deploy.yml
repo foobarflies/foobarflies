@@ -1,0 +1,77 @@
+---
+- hosts: "{{ foobarflies_hosts }}"
+  vars_files:
+    - ./vars.yml
+  tasks:
+    - name: Set some variables
+      set_fact:
+        release_path: "{{ project_path }}/releases/{{ lookup('pipe','date +%Y%m%d%H%M%S') }}"
+        current_path: "{{ project_path }}/current"
+        shared_path: "{{ project_path }}/shared"
+    - name: Retrieve current release folder
+      command: readlink -f current
+      register: current_release_path
+      ignore_errors: yes
+      args:
+        chdir: "{{ project_path }}"
+    - name: Ensure shared folder is present
+      file:
+        path: "{{ shared_path }}"
+        state: directory
+    - name: Create new folder
+      file:
+        dest={{ release_path }}
+        mode=0755
+        recurse=yes
+        state=directory
+    - name: Clone the repository
+      git:
+        repo: "git@github.com:foobarflies/foobarflies.git"
+        dest: "{{ release_path }}"
+    - name: Link config.production.json file
+      file:
+        src={{ shared_path }}/config.production.json
+        dest={{ release_path }}/config.production.json
+        state=link
+    - name: Link contents/apps directory
+      file:
+        src={{ shared_path }}/contents/apps
+        dest={{ release_path }}/contents/apps
+        state=link
+    - name: Link contents/logs directory
+      file:
+        src={{ shared_path }}/contents/logs
+        dest={{ release_path }}/contents/logs
+        state=link
+    - name: Link contents/data directory
+      file:
+        src={{ shared_path }}/contents/data
+        dest={{ release_path }}/contents/data
+        state=link
+    - name: Link contents/images directory
+      file:
+        src={{ shared_path }}/contents/images
+        dest={{ release_path }}/contents/images
+        state=link
+    - name: Update npm
+      npm:
+        path={{ release_path }}
+    - name: Stop the server via pm2
+      shell: pm2 stop foobarflies
+      ignore_errors: yes
+      args:
+        chdir: "{{ project_path }}"
+    - name: Update symlink
+      file:
+        src={{ release_path }}
+        dest={{ current_path }}
+        state=link
+    - name: Restart the server via pm2
+      shell: pm2 startOrRestart current/ecosystem.json
+      args:
+        chdir: "{{ project_path }}"
+    - name: Delete old dir
+      shell: rm -rf {{ current_release_path.stdout }}/
+      when: current_release_path.stdout != current_path
+      args:
+        warn: false
