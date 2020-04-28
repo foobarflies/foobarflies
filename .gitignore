@@ -47,7 +47,6 @@ Session.vim
 CHANGELOG.md
 
 _SOURCES_
-config.js
 
 deploy/vars.yml
 config.production.json
