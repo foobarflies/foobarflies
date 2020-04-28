@@ -36,20 +36,20 @@
 			</footer>
 			
 			<aside class="post-author">
-				{{#if author.profile_image}}
+				{{#if primary_author.profile_image}}
 					<figure class="post-author-avatar">
-						<img src="{{author.profile_image}}" alt="{{author.name}}" />
+						<img src="{{primary_author.profile_image}}" alt="{{primary_author.name}}" />
 					</figure>
 				{{/if}}
 				<div class="post-author-bio">
 					<h4>
-						{{#if author.website}}
-							<a href="{{author.website}}">{{author.name}}</a>
+						{{#if primary_author.website}}
+							<a href="{{primary_author.website}}">{{primary_author.name}}</a>
 						{{else}}
-							{{author.name}}
+							{{primary_author.name}}
 						{{/if}}
 					</h4>
-					<p>{{{author.bio}}}</p>
+					<p>{{{primary_author.bio}}}</p>
 				</div>
 				<div class="clear"></div>
 			</aside>
