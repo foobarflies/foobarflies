@@ -1,3 +1,5 @@
-foobarflies.io {
-    reverse_proxy localhost:2368
+foobarflies.io, www.foobarflies.io {
+    reverse_proxy localhost:2368 {
+        header_up X-Forwarded-Proto {scheme}
+    }
 }
