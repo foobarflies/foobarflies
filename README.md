@@ -10,5 +10,4 @@ Then commit the new version in `versions` and the modified `current` symlink. Yo
 
 #### Deploy
 
-    cd deploy
-    ansible-playbook deploy.yml -i /usr/local/etc/ansible/hosts
+    ansible-playbook deploy/deploy.yml -i /usr/local/etc/ansible/hosts
