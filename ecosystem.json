@@ -4,10 +4,9 @@
     "script": "./current/index.js",
     "cwd": "./current",
     "error_file": "../logs/app.err.log",
-    "out_file": "../logs/app.out.log",
     "restartDelay": 1000,
     "env": {
-      "NODE_ENV": "production",
+      "NODE_ENV": "production"
     }
   }]
 }
