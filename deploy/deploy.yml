@@ -53,7 +53,7 @@
         src={{ shared_path }}/content/images
         dest={{ release_path }}/content/images
         state=link
-    - name: Install npm packages (directly in Ghost folder)
+    - name: Install packages via Yarn (directly in Ghost folder)
       yarn:
         path={{ release_path }}/current
     - name: Stop the server via pm2
