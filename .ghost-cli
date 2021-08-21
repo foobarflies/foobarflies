@@ -1,6 +1,5 @@
 {
-  "active-version": "3.42.0",
-  "cli-version": "1.16.0",
-  "name": "www-foobarflies-io",
-  "previous-version": "3.41.6",
+  "active-version": "3.42.5",
+  "cli-version": "1.17.3",
+  "name": "www-foobarflies-io"
 }
